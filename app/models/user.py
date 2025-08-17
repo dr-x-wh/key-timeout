@@ -7,6 +7,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(255), nullable=False)
+    remind_time = db.Column(db.String(255))
 
     def set_password(self, password: str) -> None:
         self.password = generate_password_hash(password)
@@ -15,4 +17,4 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
     def to_dict(self) -> dict:
-        return {"id": self.id, "username": self.username, }
+        return {"id": self.id, "username": self.username, "phone": self.phone, "remind_time": self.remind_time}

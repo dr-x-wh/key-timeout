@@ -6,3 +6,5 @@ def init_blueprint(app: Flask) -> None:
     app.register_blueprint(auth_bp)
     from app.api.user import user_bp
     app.register_blueprint(user_bp)
+    from app.api.info import info_bp
+    app.register_blueprint(info_bp)
