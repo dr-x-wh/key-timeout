@@ -1,3 +1,3 @@
 export default {
-    title: '帮助', sort: 2,
+    title: '设置', sort: 2,
 }

@@ -1,45 +1,64 @@
 <script setup>
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import useUserStore from "@/store/user.js";
-import {getInfo} from "@/api/user.js";
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 const userStore = useUserStore()
+const formRef = ref()
+
+const loading = ref(false)
 
 const form = reactive({
   username: null,
   password: null,
 })
 
+const rules = reactive({
+  username: [
+    {required: true, message: '请输入用户名', trigger: 'blur'},
+  ],
+  password: [
+    {required: true, message: '请输入密码', trigger: 'blur'},
+  ],
+})
+
 const handleLogin = async () => {
-  await userStore.login(form.username, form.password)
-}
-
-const handleLogout = async () => {
-  await userStore.logout()
-}
-
-const handleGetInfo = async () => {
-  await getInfo()
+  try {
+    loading.value = true
+    if (formRef.value) {
+      const valid = await formRef.value.validate()
+      if (valid) {
+        await userStore.login(form.username, form.password)
+        await router.push({name: 'index'})
+      }
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
 <template>
   <div class="login-body">
     <el-card style="width: 500px;">
-      <el-form :model="form" :label-width="100">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username"/>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password"/>
-        </el-form-item>
-        <el-form-item label="" prop="password">
-          <el-button @click="handleLogin">登录</el-button>
-          <el-button @click="handleLogout">退出登录</el-button>
-        </el-form-item>
-      </el-form>
+      <template #header>
+        <div style="text-align: center; font-size: 24px; font-weight: bold;">登录</div>
+      </template>
+      <div v-loading="loading">
+        <el-form ref="formRef" :rules="rules" label-position="top" :model="form" :label-width="60">
+          <el-form-item label="用户名" prop="username">
+            <el-input @keydown.enter="handleLogin" v-model="form.username"/>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input @keydown.enter="handleLogin" type="password" v-model="form.password"/>
+          </el-form-item>
+          <el-form-item>
+            <el-button style="width: 100%; margin-top: 15px;" size="large" @click="handleLogin">登录</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </el-card>
-    <el-button @click="handleGetInfo">查询</el-button>
   </div>
 </template>
 
@@ -48,6 +67,7 @@ const handleGetInfo = async () => {
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   gap: 20px;
   align-items: center;
   justify-content: space-evenly;
