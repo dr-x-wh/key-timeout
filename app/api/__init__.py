@@ -16,5 +16,6 @@ def init_before(app: Flask) -> None:
     @app.before_request
     def chack_body_json():
         if request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH':
-            if not request.is_json:
-                raise BodyNotJsonError()
+            if request.content_length > 0:
+                if not request.is_json:
+                    raise BodyNotJsonError()

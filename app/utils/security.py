@@ -67,7 +67,12 @@ def login_required(view_func):
         if cache_session_id != session_id:
             return Result.error("您的账号已在其他地方登录", 4018, 401)
 
-        g.current_user = {"id": db_user.id, "username": db_user.username}
+        g.current_user = {
+            "id": db_user.id,
+            "username": db_user.username,
+            "phone": db_user.phone,
+            "remind_time": db_user.remind_time,
+        }
         return view_func(*args, **kwargs)
 
     return wrapper
