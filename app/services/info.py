@@ -1,6 +1,7 @@
 from datetime import date
 from typing import Optional
 
+from flask import current_app
 from flask_sqlalchemy.pagination import Pagination
 
 from app.extensions import db
@@ -16,8 +17,39 @@ class InfoService:
         return info
 
     @staticmethod
-    def get_pagination_by_user_id(user_id: int, page: int, per_page: int) -> Optional[Pagination]:
-        return Info.query.paginate(page=page, per_page=per_page, error_out=False)
+    def get_pagination_by_user_id(query) -> Optional[Pagination]:
+        page = query.get('page', 1, type=int)
+        per_page = query.get('per_page', 10, type=int)
+        desc = query.get('desc', 'true').lower() == 'true'
+        order_by = query.get('order_by', 'id')
+
+        qQuery = Info.query
+
+        if name := query.get('name'):
+            qQuery = qQuery.filter(Info.name.like(f'%{name}%'))
+
+        if person := query.get('person'):
+            qQuery = qQuery.filter(Info.person.like(f'%{person}%'))
+
+        if phone := query.get('phone'):
+            qQuery = qQuery.filter(Info.phone.like(f'%{phone}%'))
+
+        if start_date := query.getlist("start_date[]"):
+            start_date_0 = date.fromisoformat(start_date[0])
+            start_date_1 = date.fromisoformat(start_date[1])
+            qQuery = qQuery.filter(Info.start_date.between(start_date_0, start_date_1))
+
+        if end_date := query.getlist("end_date[]"):
+            end_date_0 = date.fromisoformat(end_date[0])
+            end_date_1 = date.fromisoformat(end_date[1])
+            qQuery = qQuery.filter(Info.end_date.between(end_date_0, end_date_1))
+
+        order_field = getattr(Info, order_by)
+        if desc:
+            order_field = order_field.desc()
+        qQuery = qQuery.order_by(order_field)
+
+        return qQuery.paginate(page=page, per_page=per_page, error_out=False)
 
     @staticmethod
     def create(user_id: int, name: str, start_date: date, end_date: date, person: Optional[int],
@@ -39,17 +71,20 @@ class InfoService:
         return None
 
     @staticmethod
-    def update(info_id: int, name: Optional[str], start_date: Optional[date], end_date: Optional[date],
+    def update(info_id: int, name: Optional[str], start_date: Optional[str], end_date: Optional[str],
                person: Optional[int], phone: Optional[int]) -> Optional[Info]:
         info = Info.query.get(info_id)
         if not info:
             return None
         if name:
             info.name = name
-        if start_date:
-            info.start_date = start_date
-        if end_date:
-            info.end_date = end_date
+        try:
+            if start_date:
+                info.start_date = date.fromisoformat(start_date)
+            if end_date:
+                info.end_date = date.fromisoformat(end_date)
+        except ValueError as e:
+            current_app.logger.warning(str(e))
         if person:
             info.person = person
         if phone:

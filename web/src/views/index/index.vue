@@ -13,8 +13,13 @@ const menu = computed(() => route.matched.find(s => s.meta?.layout === 'index').
 const current = computed(() => route.path)
 
 const handleLogout = async () => {
-  await userStore.logout()
-  await router.push({name: 'login'})
+  try {
+    await userStore.logout()
+    await router.push({path: '/login'})
+  } catch (e) {
+    console.warn(e)
+  }
+
 }
 </script>
 

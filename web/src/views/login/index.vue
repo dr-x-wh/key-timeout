@@ -30,7 +30,7 @@ const handleLogin = async () => {
       const valid = await formRef.value.validate()
       if (valid) {
         await userStore.login(form.username, form.password)
-        await router.push({name: 'index'})
+        await router.push({path: '/'})
       }
     }
   } finally {

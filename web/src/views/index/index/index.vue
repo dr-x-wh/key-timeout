@@ -1,14 +1,17 @@
 <script setup>
 import {onMounted, reactive, ref, toRefs} from "vue"
-import {useGetList} from "./api.js"
+import {useDelete, useGetList} from "./api.js"
 import DetailModal from "@/views/index/index/DetailModal.vue";
+import {ElMessageBox} from "element-plus";
 
 const loading = ref(false)
 const detailRef = ref()
+const tableRef = ref()
 
 const data = reactive({
   query: {
     page: 1, per_page: 10,
+    desc: null, order_by: null,
     name: null,
     person: null,
     phone: null,
@@ -28,6 +31,8 @@ const getList = async () => {
     const result = await useGetList(query.value)
     total.value = result.total
     list.value = result.data
+  } catch (e) {
+    console.warn(e)
   } finally {
     loading.value = false
   }
@@ -36,18 +41,45 @@ const getList = async () => {
 const handleReset = () => {
   query.value = {
     page: 1, per_page: 10,
+    desc: null, order_by: null,
     name: null,
     person: null,
     phone: null,
     start_date: null,
     end_date: null,
   }
+  if (tableRef.value) tableRef.value.clearSort()
   getList()
 }
 
-const handleDetail = (e, id) => {
+const handleSort = ({order, prop}) => {
+  if (order) {
+    if (order === 'descending') query.value.desc = true
+    else if (order === 'ascending') query.value.desc = false
+    query.value.order_by = prop
+  } else {
+    query.value.desc = null
+    query.value.order_by = null
+  }
+  getList()
+}
+
+const handleDetail = (type, id) => {
   if (detailRef.value) {
-    detailRef.value.open(e.target.dataset?.type, id).then(() => getList())
+    detailRef.value.open(type, id).then(() => getList())
+  }
+}
+
+const handleDelete = async (id) => {
+  try {
+    await ElMessageBox.confirm("确认删除？", "删除")
+    loading.value = true
+    await useDelete(id)
+    await getList()
+  } catch (e) {
+    console.warn(e)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -60,29 +92,31 @@ onMounted(() => {
   <div v-loading="loading" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
     <el-form :label-width="70">
       <el-row :gutter="10">
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item prop="name" label="名称">
             <el-input v-model="query.name"/>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item prop="person" label="联系人">
             <el-input v-model="query.person"/>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item prop="phone" label="联系电话">
             <el-input v-model="query.phone"/>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+      </el-row>
+      <el-row :gutter="10">
+        <el-col :span="6">
           <el-form-item prop="start_date" label="开始日期">
-            <el-date-picker type="daterange" v-model="query.start_date"/>
+            <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.start_date"/>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item prop="end_date" label="到期日期">
-            <el-date-picker type="daterange" v-model="query.end_date"/>
+            <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.end_date"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -95,17 +129,21 @@ onMounted(() => {
         </el-col>
       </el-row>
     </el-form>
-    <div><el-button icon="Plus" data-type="add" @click="handleDetail">添加</el-button></div>
-    <el-table :data="list">
-      <el-table-column label="序号" type="index"/>
-      <el-table-column prop="name" label="名称"/>
-      <el-table-column prop="person" label="联系人"/>
-      <el-table-column prop="phone" label="联系电话"/>
-      <el-table-column prop="start_date" label="开始日期"/>
-      <el-table-column prop="end_date" label="到期日期"/>
-      <el-table-column label="操作">
+    <div>
+      <el-button icon="Plus" @click="() => handleDetail('add')">添加</el-button>
+    </div>
+    <el-table ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
+              :data="list">
+      <el-table-column fixed="left" :width="60" align="center" label="序号" type="index"/>
+      <el-table-column sortable="custom" prop="name" label="名称"/>
+      <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
+      <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
+      <el-table-column sortable="custom" prop="start_date" :width="200" label="开始日期"/>
+      <el-table-column sortable="custom" prop="end_date" :width="200" label="到期日期"/>
+      <el-table-column fixed="right" :width="200" label="操作">
         <template #default="{row}">
-          <el-button data-type="update" @click="(e) => handleDetail(e, row?.id)">修改</el-button>
+          <el-button type="warning" link @click="() => handleDetail('update', row?.id)">修改</el-button>
+          <el-button type="danger" link @click="() => handleDelete(row?.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

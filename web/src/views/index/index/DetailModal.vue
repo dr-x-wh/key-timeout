@@ -6,6 +6,7 @@ const loading = ref(false)
 const visible = ref(false)
 const type = ref(null)
 const modalRef = ref()
+const formRef = ref()
 let resolveRef
 
 const title = computed(() => {
@@ -22,10 +23,22 @@ const data = ref({
   end_date: null,
 })
 
+const rules = ref({
+  name: [
+    {required: true, message: '请输入名称', trigger: 'blur'},
+  ],
+  start_date: [
+    {required: true, message: '请选择开始日期', trigger: 'change'},
+  ],
+  end_date: [
+    {required: true, message: '请选择到期日期', trigger: 'change'},
+  ],
+})
+
 const open = (typeVal, idVal) => {
   return new Promise((resolve) => {
     resolveRef = resolve
-    if (typeVal === 'update') getData()
+    if (typeVal === 'update') getData(idVal)
     type.value = typeVal
     visible.value = true
   })
@@ -39,18 +52,30 @@ const close = () => {
     start_date: null,
     end_date: null,
   }
+  if (formRef.value) formRef.value.clearValidate()
 }
 
 const getData = async (info_id) => {
-  const result = await useGetDetail(info_id)
-  console.log(result)
+  try {
+    loading.value = true
+    data.value = await useGetDetail(info_id)
+  } catch (e) {
+    console.warn(e)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleSave = async () => {
-  if (type.value === 'add') await useCreate(data.value)
-  else if (type.value === 'update') await useUpdate(data.value)
-  if (modalRef.value) modalRef.value.handleClose()
-  resolveRef()
+  try {
+    if (type.value === 'add') await useCreate(data.value)
+    else if (type.value === 'update') await useUpdate(data.value)
+    if (modalRef.value) modalRef.value.handleClose()
+    resolveRef()
+  } catch (e) {
+    console.warn(e)
+  }
+
 }
 
 defineExpose({
@@ -64,13 +89,16 @@ defineExpose({
       <el-text size="large">{{ title }}</el-text>
     </template>
     <div v-loading="loading">
-      <el-form :label-width="70">
+      <el-form ref="formRef" :rules="rules" :label-width="80">
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="name" label="名称">
               <el-input v-model="data.name"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-divider/>
+        <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="person" label="联系人">
               <el-input v-model="data.person"/>
@@ -81,14 +109,17 @@ defineExpose({
               <el-input v-model="data.phone"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-divider/>
+        <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="start_date" label="开始日期">
-              <el-date-picker type="date" value-format="YYYY-MM-DD" v-model="data.start_date"/>
+              <el-date-picker style="width: 100%;" type="date" value-format="YYYY-MM-DD" v-model="data.start_date"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item prop="end_date" label="到期日期">
-              <el-date-picker type="date" value-format="YYYY-MM-DD" v-model="data.end_date"/>
+              <el-date-picker style="width: 100%;" type="date" value-format="YYYY-MM-DD" v-model="data.end_date"/>
             </el-form-item>
           </el-col>
         </el-row>

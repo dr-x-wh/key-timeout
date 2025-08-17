@@ -21,6 +21,11 @@ const useUserStore = defineStore('user', {
                 localStorage.removeItem("token")
             }
         },//
+        cleanOnline() {
+            this.id = null
+            this.username = null
+            localStorage.removeItem("token")
+        },//
         async getInfo() {
             const userInfo = await getInfo()
             this.id = userInfo.id

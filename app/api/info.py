@@ -21,9 +21,8 @@ def get_info(info_id: int):
 @info_bp.route("/list", methods=["GET"])
 @login_required
 def get_infos():
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
-    infos = InfoService.get_pagination_by_user_id(UserTools.get_current_user().get('id'), page, per_page)
+    query = request.args
+    infos = InfoService.get_pagination_by_user_id(query)
     if infos is not None:
         return Result.success({"total": infos.total, "data": [info.to_dict() for info in infos.items]})
     return Result.error()
