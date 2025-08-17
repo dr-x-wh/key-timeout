@@ -9,9 +9,9 @@ class InfoService:
     @staticmethod
     def get_by_id(info_id: int) -> Optional[Info]:
         info = Info.query.get(info_id)
-        if info:
-            return info
-        return None
+        if not info:
+            return None
+        return info
 
     @staticmethod
     def get_by_user_id(user_id: int) -> Optional[List[Info]]:
@@ -40,7 +40,29 @@ class InfoService:
         return None
 
     @staticmethod
-    def delete_user(info_id: int) -> bool:
+    def update(info_id: int, name: Optional[str], start_date: Optional[date], end_date: Optional[date],
+               person: Optional[int], phone: Optional[int]) -> Optional[Info]:
+        info = Info.query.get(info_id)
+        if not info:
+            return None
+        if name:
+            info.name = name
+        if start_date:
+            info.start_date = start_date
+        if end_date:
+            info.end_date = end_date
+        if person:
+            info.person = person
+        if phone:
+            info.phone = phone
+        db.session.commit()
+        db.session.refresh(info)
+        if info:
+            return info
+        return None
+
+    @staticmethod
+    def delete_info(info_id: int) -> bool:
         db_info = Info.query.get(info_id)
         if db_info:
             db.session.delete(db_info)

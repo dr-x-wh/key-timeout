@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 from app.services.info import InfoService
 from app.utils.result import Result
@@ -25,19 +25,39 @@ def get_infos():
     return Result.success([])
 
 
+@info_bp.route("", methods=["POST"])
+@login_required
+def create():
+    info = request.json
+    if "name" not in info or "start_date" not in info or "end_date" not in info:
+        return Result.error()
+    db_info = InfoService.create(UserTools.get_current_user().get("id"), info.get("name"), info.get("start_date"),
+                                 info.get("end_date"), info.get("person"), info.get("phone"))
+    if not db_info:
+        return Result.error()
+    return Result.success()
+
+
 @info_bp.route("", methods=["PATCH"])
 @login_required
 def update_info():
-    infos = InfoService.get_by_user_id(UserTools.get_current_user().get('id'))
-    if infos:
-        return Result.success([info.to_dict() for info in infos])
+    info = request.json
+    if info_id := info.get("id"):
+        info_by_id = InfoService.get_by_id(info_id)
+        if not info_by_id:
+            return Result.error()
+        if info_by_id.user_id != UserTools.get_current_user().get("id"):
+            return Result.error()
+        db_info = InfoService.update(info_id, info.get("name"), info.get("start_date"), info.get("end_date"),
+                                     info.get("person"), info.get("phone"))
+        if not db_info:
+            return Result.error()
     return Result.success([])
 
 
-@info_bp.route("/list", methods=["GET"])
+@info_bp.route("/<int:info_id>", methods=["DELETE"])
 @login_required
-def del_info():
-    infos = InfoService.get_by_user_id(UserTools.get_current_user().get('id'))
-    if infos:
-        return Result.success([info.to_dict() for info in infos])
-    return Result.success([])
+def del_info(info_id: int):
+    if InfoService.delete_info(info_id):
+        return Result.success()
+    return Result.error()

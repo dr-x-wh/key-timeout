@@ -21,7 +21,7 @@ class UserService:
 
     @staticmethod
     def create(username: str, password: str, phone: str, remind_time: Optional[str]) -> Optional[User]:
-        db_user = UserService.get_by_username(username)
+        db_user = User.query.filter(User.username == username).first()
         if db_user:
             return None
         user = User()
