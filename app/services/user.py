@@ -20,13 +20,16 @@ class UserService:
         return None
 
     @staticmethod
-    def create(username: str, password: str) -> Optional[User]:
+    def create(username: str, password: str, phone: str, remind_time: Optional[str]) -> Optional[User]:
         db_user = UserService.get_by_username(username)
         if db_user:
             return None
         user = User()
         user.username = username
         user.set_password(password)
+        user.phone = phone
+        if remind_time:
+            user.remind_time = remind_time
         db.session.add(user)
         db.session.commit()
         db.session.refresh(user)

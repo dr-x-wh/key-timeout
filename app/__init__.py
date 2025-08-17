@@ -21,8 +21,10 @@ def create_app(def_conf: Config = Config) -> Flask:
         from app.errors.handler import init_error_handler
         init_error_handler(app)
 
-        from app.api import init_blueprint
+        from app.api import init_blueprint, init_before
         init_blueprint(app)
+        init_before(app)
+
 
     return app
 

@@ -23,3 +23,21 @@ def get_infos():
     if infos:
         return Result.success([info.to_dict() for info in infos])
     return Result.success([])
+
+
+@info_bp.route("", methods=["PATCH"])
+@login_required
+def update_info():
+    infos = InfoService.get_by_user_id(UserTools.get_current_user().get('id'))
+    if infos:
+        return Result.success([info.to_dict() for info in infos])
+    return Result.success([])
+
+
+@info_bp.route("/list", methods=["GET"])
+@login_required
+def del_info():
+    infos = InfoService.get_by_user_id(UserTools.get_current_user().get('id'))
+    if infos:
+        return Result.success([info.to_dict() for info in infos])
+    return Result.success([])

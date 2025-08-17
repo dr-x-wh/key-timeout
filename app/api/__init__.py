@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, request
+
+from app.errors import BodyNotJsonError
 
 
 def init_blueprint(app: Flask) -> None:
@@ -8,3 +10,11 @@ def init_blueprint(app: Flask) -> None:
     app.register_blueprint(user_bp)
     from app.api.info import info_bp
     app.register_blueprint(info_bp)
+
+
+def init_before(app: Flask) -> None:
+    @app.before_request
+    def chack_body_json():
+        if request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH':
+            if not request.is_json:
+                raise BodyNotJsonError()
