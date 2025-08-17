@@ -88,8 +88,8 @@ defineExpose({
     <template #header>
       <el-text size="large">{{ title }}</el-text>
     </template>
-    <div v-loading="loading">
-      <el-form ref="formRef" :rules="rules" :label-width="80">
+    <div v-loading="loading" style="padding: 0 20px;">
+      <el-form ref="formRef" :rules="rules" :model="data" :label-width="80">
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="name" label="名称">

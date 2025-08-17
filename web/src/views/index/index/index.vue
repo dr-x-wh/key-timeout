@@ -90,7 +90,7 @@ onMounted(() => {
 
 <template>
   <div v-loading="loading" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
-    <el-form :label-width="70">
+    <el-form size="small" :label-width="70">
       <el-row :gutter="10">
         <el-col :span="6">
           <el-form-item prop="name" label="名称">
@@ -129,7 +129,7 @@ onMounted(() => {
         </el-col>
       </el-row>
     </el-form>
-    <div>
+    <div style="display: flex; justify-content: flex-end;">
       <el-button icon="Plus" @click="() => handleDetail('add')">添加</el-button>
     </div>
     <el-table ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
