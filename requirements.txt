@@ -1,0 +1,15 @@
+flask
+flask-cors
+
+flask-sqlalchemy
+pymysql
+flask-migrate
+
+flask-caching
+redis
+
+pyjwt
+werkzeug
+
+python-dotenv
+gunicorn
