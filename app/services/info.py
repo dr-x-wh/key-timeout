@@ -1,5 +1,7 @@
 from datetime import date
-from typing import Optional, List
+from typing import Optional
+
+from flask_sqlalchemy.pagination import Pagination
 
 from app.extensions import db
 from app.models.info import Info
@@ -14,11 +16,8 @@ class InfoService:
         return info
 
     @staticmethod
-    def get_by_user_id(user_id: int) -> Optional[List[Info]]:
-        infos = Info.query.filter_by(user_id=user_id).all()
-        if infos:
-            return infos
-        return None
+    def get_pagination_by_user_id(user_id: int, page: int, per_page: int) -> Optional[Pagination]:
+        return Info.query.paginate(page=page, per_page=per_page, error_out=False)
 
     @staticmethod
     def create(user_id: int, name: str, start_date: date, end_date: date, person: Optional[int],

@@ -12,4 +12,4 @@ class Info(db.Model):
 
     def to_dict(self) -> dict:
         return {"id": self.id, "user_id": self.user_id, "name": self.name, "person": self.person, "phone": self.phone,
-                "start_date": self.start_date, "end_date": self.end_date}
+                "start_date": self.start_date.isoformat(), "end_date": self.end_date.isoformat()}

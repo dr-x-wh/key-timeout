@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
 import {getInfo, login, logout} from "@/api/user.js";
-import {useRouter} from "vue-router";
 
 const useUserStore = defineStore('user', {
     state: () => ({
@@ -14,10 +13,13 @@ const useUserStore = defineStore('user', {
             await this.getInfo()
         },//
         async logout() {
-            await logout()
-            this.id = null
-            this.username = null
-            localStorage.removeItem("token")
+            try {
+                await logout()
+            } finally {
+                this.id = null
+                this.username = null
+                localStorage.removeItem("token")
+            }
         },//
         async getInfo() {
             const userInfo = await getInfo()

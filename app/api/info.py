@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import Blueprint, request
 
 from app.services.info import InfoService
@@ -19,10 +21,12 @@ def get_info(info_id: int):
 @info_bp.route("/list", methods=["GET"])
 @login_required
 def get_infos():
-    infos = InfoService.get_by_user_id(UserTools.get_current_user().get('id'))
-    if infos:
-        return Result.success([info.to_dict() for info in infos])
-    return Result.success([])
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    infos = InfoService.get_pagination_by_user_id(UserTools.get_current_user().get('id'), page, per_page)
+    if infos is not None:
+        return Result.success({"total": infos.total, "data": [info.to_dict() for info in infos.items]})
+    return Result.error()
 
 
 @info_bp.route("", methods=["POST"])
@@ -31,8 +35,13 @@ def create():
     info = request.json
     if "name" not in info or "start_date" not in info or "end_date" not in info:
         return Result.error()
-    db_info = InfoService.create(UserTools.get_current_user().get("id"), info.get("name"), info.get("start_date"),
-                                 info.get("end_date"), info.get("person"), info.get("phone"))
+    try:
+        start_date = date.fromisoformat(info["start_date"])
+        end_date = date.fromisoformat(info["end_date"])
+    except ValueError as e:
+        return Result.error(str(e))
+    db_info = InfoService.create(UserTools.get_current_user().get("id"), info["name"], start_date, end_date,
+                                 info.get("person"), info.get("phone"))
     if not db_info:
         return Result.error()
     return Result.success()
