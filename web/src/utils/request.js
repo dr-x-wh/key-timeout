@@ -17,14 +17,14 @@ request.interceptors.request.use(async (config) => {
 request.interceptors.response.use(async (response) => {
     return response?.data?.data
 }, async (error) => {
-    (httpErrorMap?.[error.status] || httpErrorMap.other)?.(error?.response?.data?.message)
+    (httpErrorMap?.[error.status] || httpErrorMap.other)?.(error?.response?.data)
     return Promise.reject(error)
 })
 
 const httpErrorMap = {
-    401: async (msg) => {
+    401: async (data) => {
         useUserStore().cleanOnline()
-        await router.push({path: '/login'})
+        await router.replace({path: '/login', query: {message: data?.message}})
     },//
     other: (msg) => {
         ElMessage.error(msg)

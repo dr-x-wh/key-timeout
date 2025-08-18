@@ -1,9 +1,11 @@
 <script setup>
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import useUserStore from "@/store/user.js";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import {ElMessage} from "element-plus";
 
-const router = useRouter();
+const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const formRef = ref()
 
@@ -37,6 +39,10 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  if (route.query?.message) ElMessage.warning(route.query.message)
+})
 </script>
 
 <template>
