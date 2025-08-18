@@ -34,11 +34,11 @@ def info():
     return Result.success(UserTools.get_current_user())
 
 
-@user_bp.route("", methods=["PATCH"])
+@user_bp.route("/setting", methods=["PUT"])
 @login_required
-def update():
+def setting_update():
     data = request.json
-    db_user = UserService.update(data.get("phone"), data.get("remind_time"))
+    db_user = UserService.setting_update(data.get("phone"), data.get("remind_time"))
     if db_user:
         return Result.success()
     return Result.error()

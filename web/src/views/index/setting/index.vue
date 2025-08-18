@@ -5,18 +5,25 @@ import {useUpdate} from "./api.js";
 import {ElMessage} from "element-plus";
 
 const loading = ref(false)
+const formRef = ref()
 
-const data = reactive({
+const data = ref({
   remind_time: null,
   phone: null,
+})
+
+const rules = ref({
+  phone: [
+    {required: true, message: '请填写手机号码'},
+  ],
 })
 
 const getData = async () => {
   try {
     loading.value = true
     const result = await getInfo()
-    data.phone = result?.phone
-    data.remind_time = result?.remind_time
+    data.value.phone = result?.phone
+    data.value.remind_time = result?.remind_time
   } catch (e) {
     console.warn(e)
   } finally {
@@ -26,9 +33,15 @@ const getData = async () => {
 
 const handleSave = async () => {
   try {
-    loading.value = true
-    await useUpdate(data)
-    ElMessage.success("保存成功")
+    if (formRef.value) {
+      const valid = await formRef.value.validate()
+      if (valid) {
+        loading.value = true
+        await useUpdate(data.value)
+        ElMessage.success("保存成功")
+        await getData()
+      }
+    }
   } catch (e) {
     console.warn(e)
   } finally {
@@ -44,12 +57,12 @@ onMounted(() => {
 <template>
   <div v-loading="loading"
        style="padding: 30px; display: flex; flex-direction: column; gap: 20px; align-items: center;">
-    <el-form size="small" style="width: 300px;" :label-width="100">
+    <el-form ref="formRef" :rules="rules" :model="data" size="small" style="width: 300px;" :label-width="100">
       <el-form-item prop="remind_time" label="到期提醒时间">
         <el-time-picker value-format="HH:mm:ss" v-model="data.remind_time"/>
       </el-form-item>
       <el-form-item prop="phone" label="提醒电话">
-        <el-input v-model="data.phone"/>
+        <el-input :validate-event="false" v-model="data.phone"/>
       </el-form-item>
       <el-form-item>
         <el-button @click="handleSave">保存</el-button>
