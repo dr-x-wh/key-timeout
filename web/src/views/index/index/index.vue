@@ -2,7 +2,7 @@
 import {onMounted, reactive, ref, toRefs} from "vue"
 import {useDelete, useGetList} from "./api.js"
 import DetailModal from "@/views/index/index/DetailModal.vue";
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const loading = ref(false)
 const detailRef = ref()
@@ -75,6 +75,7 @@ const handleDelete = async (id) => {
     await ElMessageBox.confirm("确认删除？", "删除")
     loading.value = true
     await useDelete(id)
+    ElMessage.success("删除成功")
     await getList()
   } catch (e) {
     console.warn(e)
@@ -90,10 +91,10 @@ onMounted(() => {
 
 <template>
   <div v-loading="loading" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
-    <el-form size="small" :label-width="70">
+    <el-form size="small" :label-width="90">
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-form-item prop="name" label="名称">
+          <el-form-item prop="name" label="提醒任务名称">
             <el-input v-model="query.name"/>
           </el-form-item>
         </el-col>
@@ -135,7 +136,7 @@ onMounted(() => {
     <el-table ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
               :data="list">
       <el-table-column fixed="left" :width="60" align="center" label="序号" type="index"/>
-      <el-table-column sortable="custom" prop="name" label="名称"/>
+      <el-table-column sortable="custom" prop="name" label="提醒任务名称"/>
       <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
       <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
       <el-table-column sortable="custom" prop="start_date" :width="200" label="开始日期"/>

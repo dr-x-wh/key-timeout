@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
 from flask import current_app
 from flask_sqlalchemy.pagination import Pagination
@@ -71,7 +71,7 @@ class InfoService:
         return None
 
     @staticmethod
-    def update(info_id: int, name: Optional[str], start_date: Optional[str], end_date: Optional[str],
+    def update(info_id: int, name: Optional[str], date_range: Optional[List],
                person: Optional[int], phone: Optional[int]) -> Optional[Info]:
         info = Info.query.get(info_id)
         if not info:
@@ -79,10 +79,9 @@ class InfoService:
         if name:
             info.name = name
         try:
-            if start_date:
-                info.start_date = date.fromisoformat(start_date)
-            if end_date:
-                info.end_date = date.fromisoformat(end_date)
+            if date_range:
+                info.start_date = date.fromisoformat(date_range[0])
+                info.end_date = date.fromisoformat(date_range[1])
         except ValueError as e:
             current_app.logger.warning(str(e))
         if person:

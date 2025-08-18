@@ -1,6 +1,7 @@
 <script setup>
 import {computed, ref} from "vue";
 import {useCreate, useGetDetail, useUpdate} from "@/views/index/index/api.js";
+import {ElMessage} from "element-plus";
 
 const loading = ref(false)
 const visible = ref(false)
@@ -19,19 +20,15 @@ const data = ref({
   name: null,
   person: null,
   phone: null,
-  start_date: null,
-  end_date: null,
+  date: null,
 })
 
 const rules = ref({
   name: [
     {required: true, message: '请输入名称', trigger: 'blur'},
   ],
-  start_date: [
+  date: [
     {required: true, message: '请选择开始日期', trigger: 'change'},
-  ],
-  end_date: [
-    {required: true, message: '请选择到期日期', trigger: 'change'},
   ],
 })
 
@@ -49,8 +46,7 @@ const close = () => {
     name: null,
     person: null,
     phone: null,
-    start_date: null,
-    end_date: null,
+    date: null,
   }
   if (formRef.value) formRef.value.clearValidate()
 }
@@ -58,7 +54,9 @@ const close = () => {
 const getData = async (info_id) => {
   try {
     loading.value = true
-    data.value = await useGetDetail(info_id)
+    const result = await useGetDetail(info_id)
+    data.value = result
+    data.value.date = [result?.start_date, result?.end_date]
   } catch (e) {
     console.warn(e)
   } finally {
@@ -70,6 +68,7 @@ const handleSave = async () => {
   try {
     if (type.value === 'add') await useCreate(data.value)
     else if (type.value === 'update') await useUpdate(data.value)
+    ElMessage.success("保存成功")
     if (modalRef.value) modalRef.value.handleClose()
     resolveRef()
   } catch (e) {
@@ -89,10 +88,10 @@ defineExpose({
       <el-text size="large">{{ title }}</el-text>
     </template>
     <div v-loading="loading" style="padding: 0 20px;">
-      <el-form ref="formRef" :rules="rules" :model="data" :label-width="80">
+      <el-form ref="formRef" :rules="rules" :model="data" :label-width="110">
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item prop="name" label="名称">
+            <el-form-item prop="name" label="提醒任务名称">
               <el-input v-model="data.name"/>
             </el-form-item>
           </el-col>
@@ -113,13 +112,8 @@ defineExpose({
         <el-divider/>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item prop="start_date" label="开始日期">
-              <el-date-picker style="width: 100%;" type="date" value-format="YYYY-MM-DD" v-model="data.start_date"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="end_date" label="到期日期">
-              <el-date-picker style="width: 100%;" type="date" value-format="YYYY-MM-DD" v-model="data.end_date"/>
+            <el-form-item prop="start_date" label="起止日期">
+              <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="data.date"/>
             </el-form-item>
           </el-col>
         </el-row>

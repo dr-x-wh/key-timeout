@@ -38,6 +38,23 @@ class UserService:
         return None
 
     @staticmethod
+    def update(phone: Optional[str], remind_time: Optional[str]) -> Optional[User]:
+        from app.utils.security import UserTools
+        user_id = UserTools.get_current_user().get("id")
+        db_user = User.query.get(user_id)
+        if not db_user:
+            return None
+        if phone:
+            db_user.phone = phone
+        if remind_time:
+            db_user.remind_time = remind_time
+        db.session.commit()
+        db.session.refresh(db_user)
+        if db_user:
+            return db_user
+        return None
+
+    @staticmethod
     def delete_user(user_id: int) -> bool:
         db_user = User.query.get(user_id)
         if db_user:

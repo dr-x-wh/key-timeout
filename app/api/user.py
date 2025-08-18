@@ -32,3 +32,13 @@ def sign_out():
 @login_required
 def info():
     return Result.success(UserTools.get_current_user())
+
+
+@user_bp.route("", methods=["PATCH"])
+@login_required
+def update():
+    data = request.json
+    db_user = UserService.update(data.get("phone"), data.get("remind_time"))
+    if db_user:
+        return Result.success()
+    return Result.error()
