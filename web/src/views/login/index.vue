@@ -8,6 +8,7 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const formRef = ref()
+const usernameRef = ref()
 
 const loading = ref(false)
 
@@ -42,6 +43,7 @@ const handleLogin = async () => {
 
 onMounted(() => {
   if (route.query?.message) ElMessage.warning(route.query.message)
+  if (usernameRef.value) usernameRef.value.focus()
 })
 </script>
 
@@ -54,7 +56,7 @@ onMounted(() => {
       <div v-loading="loading">
         <el-form ref="formRef" :rules="rules" label-position="top" :model="form" :label-width="60">
           <el-form-item label="用户名" prop="username">
-            <el-input :validate-event="false" @keydown.enter="handleLogin" v-model="form.username"/>
+            <el-input ref="usernameRef" :validate-event="false" @keydown.enter="handleLogin" v-model="form.username"/>
           </el-form-item>
           <el-form-item label="密码" prop="password">
             <el-input :validate-event="false" @keydown.enter="handleLogin" type="password" v-model="form.password"/>
