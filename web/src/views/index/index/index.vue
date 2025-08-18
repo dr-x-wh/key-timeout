@@ -93,29 +93,29 @@ onMounted(() => {
   <div v-loading="loading" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
     <el-form size="small" :label-width="90">
       <el-row :gutter="10">
-        <el-col :span="6">
+        <el-col :xs="24" :sm="12" :md="8">
           <el-form-item prop="name" label="提醒任务名称">
-            <el-input v-model="query.name"/>
+            <el-input style="width: 100%" v-model="query.name"/>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :xs="24" :sm="12" :md="8">
           <el-form-item prop="person" label="联系人">
-            <el-input v-model="query.person"/>
+            <el-input style="width: 100%" v-model="query.person"/>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :xs="24" :sm="12" :md="8">
           <el-form-item prop="phone" label="联系电话">
-            <el-input v-model="query.phone"/>
+            <el-input style="width: 100%" v-model="query.phone"/>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="10">
-        <el-col :span="6">
+        <el-col :xs="24" :sm="12" :md="8">
           <el-form-item prop="start_date" label="开始日期">
             <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.start_date"/>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :xs="24" :sm="12" :md="8">
           <el-form-item prop="end_date" label="到期日期">
             <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.end_date"/>
           </el-form-item>
@@ -133,18 +133,21 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end;">
       <el-button icon="Plus" @click="() => handleDetail('add')">添加</el-button>
     </div>
-    <el-table ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
+    <el-table style="width: 100%" ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
               :data="list">
-      <el-table-column fixed="left" :width="60" align="center" label="序号" type="index"/>
+      <el-table-column :width="60" align="center" label="序号" type="index"/>
       <el-table-column sortable="custom" prop="name" label="提醒任务名称"/>
       <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
       <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
-      <el-table-column sortable="custom" prop="start_date" :width="200" label="开始日期"/>
-      <el-table-column sortable="custom" prop="end_date" :width="200" label="到期日期"/>
-      <el-table-column fixed="right" :width="200" label="操作">
+      <el-table-column sortable="custom" align="center" prop="start_date" :width="200" label="开始日期"/>
+      <el-table-column sortable="custom" align="center" prop="end_date" :width="200" label="到期日期"/>
+      <el-table-column fixed="right" align="center" :width="60" label="操作">
         <template #default="{row}">
-          <el-button type="warning" link @click="() => handleDetail('update', row?.id)">修改</el-button>
-          <el-button type="danger" link @click="() => handleDelete(row?.id)">删除</el-button>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+            <el-button type="warning" link @click="() => handleDetail('update', row?.id)">修改</el-button>
+            <div/>
+            <el-button type="danger" link @click="() => handleDelete(row?.id)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
