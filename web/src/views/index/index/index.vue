@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref, toRefs} from "vue"
+import {computed, onMounted, onUnmounted, reactive, ref, toRefs} from "vue"
 import {useDelete, useGetList} from "./api.js"
 import DetailModal from "@/views/index/index/DetailModal.vue";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -7,6 +7,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 const loading = ref(false)
 const detailRef = ref()
 const tableRef = ref()
+const isMobile = ref(false)
 
 const data = reactive({
   query: {
@@ -15,14 +16,51 @@ const data = reactive({
     name: null,
     person: null,
     phone: null,
-    start_date: null,
-    end_date: null,
+    start_date_0: null,
+    start_date_1: null,
+    end_date_0: null,
+    end_date_1: null,
   },
   list: [],
   total: null,
 })
 
 const {query, list, total} = toRefs(data)
+
+const start_date_range = computed({
+  get() {
+    return [query.value.start_date_0, query.value.start_date_1]
+  },
+  set(newVal) {
+    if (newVal) {
+      query.value.start_date_0 = newVal[0]
+      query.value.start_date_1 = newVal[1]
+    } else {
+      query.value.start_date_0 = null
+      query.value.start_date_1 = null
+    }
+  }
+})
+const end_date_range = computed({
+  get() {
+    return [query.value.end_date_0, query.value.end_date_1]
+  },
+  set(newVal) {
+    if (newVal) {
+      query.value.end_date_0 = newVal[0]
+      query.value.end_date_0 = newVal[1]
+    } else {
+      query.value.end_date_0 = null
+      query.value.end_date_0 = null
+    }
+  }
+})
+
+
+const handleResize = () => {
+  const width = window.innerWidth
+  isMobile.value = width < 768
+}
 
 
 const getList = async () => {
@@ -45,8 +83,10 @@ const handleReset = () => {
     name: null,
     person: null,
     phone: null,
-    start_date: null,
-    end_date: null,
+    start_date_0: null,
+    start_date_1: null,
+    end_date_0: null,
+    end_date_1: null,
   }
   if (tableRef.value) tableRef.value.clearSort()
   getList()
@@ -85,7 +125,14 @@ const handleDelete = async (id) => {
 }
 
 onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
   getList()
+})
+
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
@@ -93,33 +140,63 @@ onMounted(() => {
   <div v-loading="loading" style="padding: 30px; display: flex; flex-direction: column; gap: 20px;">
     <el-form size="small" :label-width="90">
       <el-row :gutter="10">
-        <el-col :xs="24" :sm="12" :md="8">
+        <el-col :xs="24" :sm="12" :md="4">
           <el-form-item prop="name" label="提醒任务名称">
             <el-input style="width: 100%" v-model="query.name"/>
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="8">
+        <el-col :xs="24" :sm="12" :md="4">
           <el-form-item prop="person" label="联系人">
             <el-input style="width: 100%" v-model="query.person"/>
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="8">
+        <el-col :xs="24" :sm="12" :md="4">
           <el-form-item prop="phone" label="联系电话">
             <el-input style="width: 100%" v-model="query.phone"/>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="10">
-        <el-col :xs="24" :sm="12" :md="8">
-          <el-form-item prop="start_date" label="开始日期">
-            <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.start_date"/>
-          </el-form-item>
-        </el-col>
-        <el-col :xs="24" :sm="12" :md="8">
-          <el-form-item prop="end_date" label="到期日期">
-            <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="query.end_date"/>
-          </el-form-item>
-        </el-col>
+        <template v-if="isMobile">
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="start_date_0" label="开始日期起始">
+              <el-date-picker :editable="false" style="width: 100%;" type="date" value-format="YYYY-MM-DD"
+                              v-model="query.start_date_0"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="start_date_1" label="开始日期结束">
+              <el-date-picker :editable="false" style="width: 100%;" type="date" value-format="YYYY-MM-DD"
+                              v-model="query.start_date_1"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="end_date_0" label="到期日期起始">
+              <el-date-picker :editable="false" style="width: 100%;" type="date" value-format="YYYY-MM-DD"
+                              v-model="query.end_date_0"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="end_date_1" label="到期日期结束">
+              <el-date-picker :editable="false" style="width: 100%;" type="date" value-format="YYYY-MM-DD"
+                              v-model="query.end_date_1"/>
+            </el-form-item>
+          </el-col>
+        </template>
+        <template v-else>
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="start_date" label="开始日期">
+              <el-date-picker :editable="false" style="width: 100%;" type="daterange" value-format="YYYY-MM-DD"
+                              v-model="start_date_range"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="8">
+            <el-form-item prop="end_date" label="到期日期">
+              <el-date-picker :editable="false" style="width: 100%;" type="daterange" value-format="YYYY-MM-DD"
+                              v-model="end_date_range"/>
+            </el-form-item>
+          </el-col>
+        </template>
       </el-row>
       <el-row>
         <el-col>
@@ -133,10 +210,11 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end;">
       <el-button icon="Plus" @click="() => handleDetail('add')">添加</el-button>
     </div>
-    <el-table style="width: 100%" ref="tableRef" @sort-change="handleSort" :row-key="row => row.id"
+    <el-table :size="isMobile?'small':'default'" style="width: 100%" ref="tableRef" @sort-change="handleSort"
+              :row-key="row => row.id"
               :data="list">
       <el-table-column :width="60" align="center" label="序号" type="index"/>
-      <el-table-column sortable="custom" prop="name" label="提醒任务名称"/>
+      <el-table-column sortable="custom" prop="name" :min-width="200" label="提醒任务名称"/>
       <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
       <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
       <el-table-column sortable="custom" align="center" prop="start_date" :width="200" label="开始日期"/>
@@ -151,7 +229,8 @@ onMounted(() => {
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination layout="total, prev, pager, next, ->, sizes, jumper" v-model:page-size="query.per_page"
+    <el-pagination :size="isMobile?'small':'default'" style="width: 100%;" layout="total, prev, pager, next, ->, sizes"
+                   v-model:page-size="query.per_page"
                    v-model:current-page="query.page" :total="total"
                    @change="getList"/>
     <DetailModal ref="detailRef"/>

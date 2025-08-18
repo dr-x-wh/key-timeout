@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {useCreate, useGetDetail, useUpdate} from "@/views/index/index/api.js";
 import {ElMessage} from "element-plus";
 
@@ -20,17 +20,45 @@ const data = ref({
   name: null,
   person: null,
   phone: null,
-  date: null,
+  start_date: null,
+  end_date: null,
+})
+
+const date_range = computed({
+  get() {
+    return [data.value.start_date, data.value.end_date]
+  },
+  set(newVal) {
+    if (newVal) {
+      data.value.start_date = newVal[0]
+      data.value.end_date = newVal[1]
+    } else {
+      data.value.start_date = null
+      data.value.end_date = null
+    }
+  }
 })
 
 const rules = ref({
   name: [
     {required: true, message: '请输入提醒任务名称', trigger: 'blur'},
   ],
-  date: [
+  start_date: [
+    {required: true, message: '请选择起止日期', trigger: 'change'},
+  ],
+  end_date: [
     {required: true, message: '请选择起止日期', trigger: 'change'},
   ],
 })
+
+const dialogWidth = ref('60%')
+const isMobile = ref(false)
+
+const handleResize = () => {
+  const width = window.innerWidth
+  isMobile.value = width < 768
+  dialogWidth.value = isMobile.value ? '90%' : '60%'
+}
 
 const open = (typeVal, idVal) => {
   return new Promise((resolve) => {
@@ -46,7 +74,8 @@ const close = () => {
     name: null,
     person: null,
     phone: null,
-    date: null,
+    start_date: null,
+    end_date: null,
   }
   if (formRef.value) formRef.value.clearValidate()
 }
@@ -54,9 +83,7 @@ const close = () => {
 const getData = async (info_id) => {
   try {
     loading.value = true
-    const result = await useGetDetail(info_id)
-    data.value = result
-    data.value.date = [result?.start_date, result?.end_date]
+    data.value = await useGetDetail(info_id)
   } catch (e) {
     console.warn(e)
   } finally {
@@ -82,47 +109,76 @@ const handleSave = async () => {
 
 }
 
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 defineExpose({
   open,
 })
 </script>
 
 <template>
-  <el-dialog ref="modalRef" v-model="visible" @closed="close">
+  <el-dialog ref="modalRef" v-model="visible" :width="dialogWidth" @closed="close">
     <template #header>
       <el-text size="large">{{ title }}</el-text>
     </template>
     <div v-loading="loading" style="padding: 0 20px;">
-      <el-form ref="formRef" :rules="rules" :model="data" :label-width="110">
+      <el-form :size="isMobile?'small':'default'" :label-position="isMobile?'top':'left'" ref="formRef" :rules="rules"
+               :model="data" :label-width="110">
         <el-divider/>
         <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :xs="24" :sm="12" :md="12">
             <el-form-item prop="name" label="提醒任务名称">
-              <el-input :validate-event="false" v-model="data.name"/>
+              <el-input style="width: 100%;" :validate-event="false" v-model="data.name"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-divider/>
         <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :xs="24" :sm="12" :md="12">
             <el-form-item prop="person" label="联系人">
-              <el-input :validate-event="false" v-model="data.person"/>
+              <el-input style="width: 100%;" :validate-event="false" v-model="data.person"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :xs="24" :sm="12" :md="12">
             <el-form-item prop="phone" label="联系电话">
-              <el-input :validate-event="false" v-model="data.phone"/>
+              <el-input style="width: 100%;" :validate-event="false" v-model="data.phone"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-divider/>
         <el-row :gutter="10">
-          <el-col :span="12">
-            <el-form-item prop="date" label="起止日期">
-              <el-date-picker :validate-event="false" style="width: 100%;" type="daterange" value-format="YYYY-MM-DD"
-                              v-model="data.date"/>
-            </el-form-item>
-          </el-col>
+          <template v-if="isMobile">
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item prop="start_date" label="开始日期">
+                <el-date-picker :editable="false" :validate-event="false" style="width: 100%;" type="date"
+                                value-format="YYYY-MM-DD"
+                                v-model="data.start_date"/>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item prop="end_date" label="结束日期">
+                <el-date-picker :editable="false" :validate-event="false" style="width: 100%;" type="date"
+                                value-format="YYYY-MM-DD"
+                                v-model="data.end_date"/>
+              </el-form-item>
+            </el-col>
+          </template>
+          <template v-else>
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item prop="start_date" label="起止日期">
+                <el-date-picker :editable="false" :validate-event="false" style="width: 100%;" type="daterange"
+                                value-format="YYYY-MM-DD"
+                                v-model="date_range"/>
+              </el-form-item>
+            </el-col>
+          </template>
         </el-row>
       </el-form>
     </div>

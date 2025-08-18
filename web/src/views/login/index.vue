@@ -49,7 +49,7 @@ onMounted(() => {
 
 <template>
   <div class="login-body">
-    <el-card style="width: 500px;">
+    <el-card style="width: 90%; max-width: 500px;">
       <template #header>
         <div style="text-align: center; font-size: 24px; font-weight: bold;">登录</div>
       </template>

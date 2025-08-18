@@ -32,11 +32,11 @@ def get_infos():
 @login_required
 def create():
     info = request.json
-    if "name" not in info or "date" not in info:
+    if "name" not in info or "start_date" not in info or "end_date" not in info:
         return Result.error()
     try:
-        start_date = date.fromisoformat(info["date"][0])
-        end_date = date.fromisoformat(info["date"][1])
+        start_date = date.fromisoformat(info["start_date"])
+        end_date = date.fromisoformat(info["end_date"])
     except ValueError as e:
         return Result.error(str(e))
     db_info = InfoService.create(UserTools.get_current_user().get("id"), info["name"], start_date, end_date,
@@ -56,7 +56,7 @@ def update_info():
             return Result.error()
         if info_by_id.user_id != UserTools.get_current_user().get("id"):
             return Result.error()
-        db_info = InfoService.update(info_id, info.get("name"), info.get("date"),
+        db_info = InfoService.update(info_id, info.get("name"), info.get("start_date"), info.get("end_date"),
                                      info.get("person"), info.get("phone"))
         if not db_info:
             return Result.error()
