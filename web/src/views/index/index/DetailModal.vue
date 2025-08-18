@@ -25,10 +25,10 @@ const data = ref({
 
 const rules = ref({
   name: [
-    {required: true, message: '请输入名称', trigger: 'blur'},
+    {required: true, message: '请输入提醒任务名称', trigger: 'blur'},
   ],
   date: [
-    {required: true, message: '请选择开始日期', trigger: 'change'},
+    {required: true, message: '请选择起止日期', trigger: 'change'},
   ],
 })
 
@@ -66,11 +66,16 @@ const getData = async (info_id) => {
 
 const handleSave = async () => {
   try {
-    if (type.value === 'add') await useCreate(data.value)
-    else if (type.value === 'update') await useUpdate(data.value)
-    ElMessage.success("保存成功")
-    if (modalRef.value) modalRef.value.handleClose()
-    resolveRef()
+    if (formRef.value) {
+      const valid = await formRef.value.validate()
+      if (valid) {
+        if (type.value === 'add') await useCreate(data.value)
+        else if (type.value === 'update') await useUpdate(data.value)
+        ElMessage.success("保存成功")
+        if (modalRef.value) modalRef.value.handleClose()
+        resolveRef()
+      }
+    }
   } catch (e) {
     console.warn(e)
   }
@@ -89,10 +94,11 @@ defineExpose({
     </template>
     <div v-loading="loading" style="padding: 0 20px;">
       <el-form ref="formRef" :rules="rules" :model="data" :label-width="110">
+        <el-divider/>
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="name" label="提醒任务名称">
-              <el-input v-model="data.name"/>
+              <el-input :validate-event="false" v-model="data.name"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -100,20 +106,21 @@ defineExpose({
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item prop="person" label="联系人">
-              <el-input v-model="data.person"/>
+              <el-input :validate-event="false" v-model="data.person"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item prop="phone" label="联系电话">
-              <el-input v-model="data.phone"/>
+              <el-input :validate-event="false" v-model="data.phone"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-divider/>
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item prop="start_date" label="起止日期">
-              <el-date-picker style="width: 100%;" type="daterange" value-format="YYYY-MM-DD" v-model="data.date"/>
+            <el-form-item prop="date" label="起止日期">
+              <el-date-picker :validate-event="false" style="width: 100%;" type="daterange" value-format="YYYY-MM-DD"
+                              v-model="data.date"/>
             </el-form-item>
           </el-col>
         </el-row>

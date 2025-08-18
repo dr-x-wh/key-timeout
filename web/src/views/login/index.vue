@@ -54,10 +54,10 @@ onMounted(() => {
       <div v-loading="loading">
         <el-form ref="formRef" :rules="rules" label-position="top" :model="form" :label-width="60">
           <el-form-item label="用户名" prop="username">
-            <el-input @keydown.enter="handleLogin" v-model="form.username"/>
+            <el-input :validate-event="false" @keydown.enter="handleLogin" v-model="form.username"/>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input @keydown.enter="handleLogin" type="password" v-model="form.password"/>
+            <el-input :validate-event="false" @keydown.enter="handleLogin" type="password" v-model="form.password"/>
           </el-form-item>
           <el-form-item>
             <el-button style="width: 100%; margin-top: 15px;" size="large" @click="handleLogin">登录</el-button>
