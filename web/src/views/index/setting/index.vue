@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, reactive, ref} from "vue";
-import {getInfo} from "@/api/user.js";
+import {onMounted, ref} from "vue";
+import {useGetInfo} from "@/api/user.js";
 import {useUpdate} from "./api.js";
 import {ElMessage} from "element-plus";
 
@@ -21,7 +21,7 @@ const rules = ref({
 const getData = async () => {
   try {
     loading.value = true
-    const result = await getInfo()
+    const result = await useGetInfo()
     data.value.phone = result?.phone
     data.value.remind_time = result?.remind_time
   } catch (e) {
@@ -58,11 +58,18 @@ onMounted(() => {
   <div v-loading="loading"
        style="padding: 30px; display: flex; flex-direction: column; gap: 20px; align-items: center;">
     <el-form ref="formRef" :rules="rules" :model="data" size="small" style="width: 300px;" :label-width="100">
-      <el-form-item prop="remind_time" label="到期提醒时间">
-        <el-time-picker value-format="HH:mm:ss" v-model="data.remind_time"/>
+      <el-form-item prop="remind_time" label="提醒时间">
+        <div style="display: flex; gap: 5px;">
+          <el-select placeholder="10" clearable v-model="data.remind_time" style="width: 80px;">
+            <template v-for="num in Array.from({ length: 24 }, (_, index) => index)">
+              <el-option :value="num" :label="num"/>
+            </template>
+          </el-select>
+          <el-text>时</el-text>
+        </div>
       </el-form-item>
       <el-form-item prop="phone" label="提醒电话">
-        <el-input :validate-event="false" v-model="data.phone"/>
+        <el-input style="width: 100%;" :validate-event="false" v-model="data.phone"/>
       </el-form-item>
       <el-form-item>
         <el-button @click="handleSave">保存</el-button>

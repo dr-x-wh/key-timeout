@@ -10,6 +10,8 @@ def init_blueprint(app: Flask) -> None:
     app.register_blueprint(user_bp)
     from app.api.info import info_bp
     app.register_blueprint(info_bp)
+    from app.api.code import code_bp
+    app.register_blueprint(code_bp)
 
 
 def init_before(app: Flask) -> None:

@@ -4,3 +4,4 @@ accesslog = "logs/access.log"
 errorlog = "logs/error.log"
 loglevel = "info"
 timeout = 30
+preload_app = True

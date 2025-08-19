@@ -1,8 +1,9 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
 from flask import current_app
 from flask_sqlalchemy.pagination import Pagination
+from sqlalchemy import or_, and_
 
 from app.extensions import db
 from app.models.info import Info
@@ -17,13 +18,23 @@ class InfoService:
         return info
 
     @staticmethod
-    def get_pagination_by_user_id(query) -> Optional[Pagination]:
+    def get_job() -> List[Info]:
+        infos = Info.query.filter(
+            and_(or_(Info.state.is_(None), Info.state != "1"), Info.end_date <= date.today())).all()
+        if not infos:
+            return []
+        return infos
+
+    @staticmethod
+    def get_pagination_by_user_id(query, user_id: int) -> Optional[Pagination]:
         page = query.get('page', 1, type=int)
         per_page = query.get('per_page', 10, type=int)
         desc = query.get('desc', 'true').lower() == 'true'
         order_by = query.get('order_by', 'id')
 
         qQuery = Info.query
+
+        qQuery = qQuery.filter(Info.user_id == user_id)
 
         if name := query.get('name'):
             qQuery = qQuery.filter(Info.name.like(f'%{name}%'))
@@ -96,10 +107,19 @@ class InfoService:
         return None
 
     @staticmethod
-    def delete_info(info_id: int) -> bool:
-        db_info = Info.query.get(info_id)
+    def delete_info(info_id: int, user_id: int) -> bool:
+        db_info = Info.query.filter_by(id=info_id, user_id=user_id).first()
         if db_info:
             db.session.delete(db_info)
+            db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def state_finish(info_id: int) -> bool:
+        db_info = Info.query.get(info_id)
+        if db_info:
+            db_info.state = "1"
             db.session.commit()
             return True
         return False

@@ -1,6 +1,6 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref} from "vue";
-import {useCreate, useGetDetail, useUpdate} from "@/views/index/index/api.js";
+import {useCreate, useGetDetail, useUpdate} from "./api.js";
 import {ElMessage} from "element-plus";
 
 const loading = ref(false)

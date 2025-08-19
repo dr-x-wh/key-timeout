@@ -1,13 +1,13 @@
 import request from "@/utils/request.js"
 
-export function login(data) {
+export function useLogin(data) {
     return request.post('/login', data)
 }
 
-export function logout(data) {
+export function useLogout(data) {
     return request.post('/logout', data)
 }
 
-export function getInfo() {
+export function useGetInfo() {
     return request.get('/user/info')
 }

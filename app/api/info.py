@@ -13,7 +13,7 @@ info_bp = Blueprint("info", __name__, url_prefix="/info")
 @login_required
 def get_info(info_id: int):
     info = InfoService.get_by_id(info_id)
-    if info:
+    if info and info.user_id == UserTools.get_current_user().get("id"):
         return Result.success(info.to_dict())
     return Result.error()
 
@@ -22,7 +22,8 @@ def get_info(info_id: int):
 @login_required
 def get_infos():
     query = request.args
-    infos = InfoService.get_pagination_by_user_id(query)
+    user_id = UserTools.get_current_user().get("id")
+    infos = InfoService.get_pagination_by_user_id(query, user_id)
     if infos is not None:
         return Result.success({"total": infos.total, "data": [info.to_dict() for info in infos.items]})
     return Result.error()
@@ -52,7 +53,7 @@ def update_info():
     info = request.json
     if info_id := info.get("id"):
         info_by_id = InfoService.get_by_id(info_id)
-        if not info_by_id:
+        if not info_by_id or info_by_id.user_id != UserTools.get_current_user().get("id"):
             return Result.error()
         if info_by_id.user_id != UserTools.get_current_user().get("id"):
             return Result.error()
@@ -66,6 +67,6 @@ def update_info():
 @info_bp.route("/<int:info_id>", methods=["DELETE"])
 @login_required
 def del_info(info_id: int):
-    if InfoService.delete_info(info_id):
+    if InfoService.delete_info(info_id, UserTools.get_current_user().get("id")):
         return Result.success()
     return Result.error()

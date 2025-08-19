@@ -13,3 +13,9 @@ werkzeug
 
 python-dotenv
 gunicorn
+
+requests
+
+apscheduler
+beautifulsoup4
+lxml
