@@ -16,6 +16,10 @@ def run_job():
         scheduler.add_job(func=run_key_timeout, trigger=CronTrigger(minute=0), id='run_key_timeout',
                           replace_existing=True)
 
+        from app.job.power_outage import run as run_power_outage
+        scheduler.add_job(func=run_power_outage, trigger=CronTrigger(minute=0), id='run_power_outage',
+                          replace_existing=True)
+
         scheduler.start()
 
         atexit.register(lambda: scheduler.shutdown())

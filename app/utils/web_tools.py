@@ -1,16 +1,18 @@
+import logging
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
-from app.extensions import logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 url = "http://i.whut.edu.cn/xxtg/znbm/hqglc/"
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36", }
 
 
-def get_notice() -> List:
+def get_web_notice() -> List:
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()

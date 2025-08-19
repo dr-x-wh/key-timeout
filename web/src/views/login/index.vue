@@ -122,7 +122,7 @@ const handleRegister = async () => {
       const valid = await formRef.value.validate()
       if (valid) {
         await useRegister(form.value)
-        isLogin.value = true
+        handleChange()
       }
     }
   } finally {

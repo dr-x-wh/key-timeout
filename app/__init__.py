@@ -18,6 +18,9 @@ def create_app(def_conf: Config = Config) -> Flask:
         from app.extensions import init_extensions
         init_extensions(app)
 
+        from app.services import init_data
+        init_data(app)
+
         from app.errors.handler import init_error_handler
         init_error_handler(app)
 

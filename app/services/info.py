@@ -1,11 +1,10 @@
 from datetime import date
 from typing import Optional, List
 
-from flask import current_app
 from flask_sqlalchemy.pagination import Pagination
 from sqlalchemy import or_, and_
 
-from app.extensions import db
+from app.extensions import db, logger
 from app.models.info import Info
 
 
@@ -95,7 +94,7 @@ class InfoService:
             if end_date:
                 info.end_date = date.fromisoformat(end_date)
         except ValueError as e:
-            current_app.logger.warning(str(e))
+            logger.warning(str(e))
         if person:
             info.person = person
         if phone:

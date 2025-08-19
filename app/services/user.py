@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.extensions import db
+from app.models import UserRole
 from app.models.user import User
 
 
@@ -30,6 +31,9 @@ class UserService:
         user.phone = phone
         if remind_time:
             user.remind_time = remind_time
+        count = User.query.count()
+        if count == 0:
+            user.role = UserRole.ADMIN
         db.session.add(user)
         db.session.commit()
         db.session.refresh(user)

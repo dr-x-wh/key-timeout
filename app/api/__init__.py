@@ -12,6 +12,10 @@ def init_blueprint(app: Flask) -> None:
     app.register_blueprint(info_bp)
     from app.api.code import code_bp
     app.register_blueprint(code_bp)
+    from app.api.notice import notice_bp
+    app.register_blueprint(notice_bp)
+    from app.api.setting import setting_bp
+    app.register_blueprint(setting_bp)
 
 
 def init_before(app: Flask) -> None:

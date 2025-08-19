@@ -9,9 +9,8 @@ from app.utils.sms_tools import send_sms
 
 
 def run() -> None:
-    logger.info("start_run")
+    logger.info("run_key_timeout")
     data_list = get_list()
-    logger.info(f"data is: {data_list}")
     for data in data_list:
         if send_sms(data['from_phone'], f"""
         {data['name']}
@@ -30,7 +29,6 @@ def get_list() -> List[Dict]:
             for info in infos:
                 info = info.to_dict()
                 user = UserService.get_by_id(info['user_id']).to_dict()
-                logger.info(user)
                 remind_time = user["remind_time"]
                 if remind_time is None:
                     remind_time = "10"
