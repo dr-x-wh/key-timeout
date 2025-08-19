@@ -2,7 +2,8 @@ from typing import List
 
 import requests
 from bs4 import BeautifulSoup
-from flask import current_app
+
+from app.extensions import logger
 
 url = "http://i.whut.edu.cn/xxtg/znbm/hqglc/"
 headers = {
@@ -21,5 +22,5 @@ def get_notice() -> List:
         return [{"title": li.select_one("a").get("title"), "date": li.select_one("strong").get_text()} for li in lis if
                 (("停电" in li.select_one("a")["title"]) and (li.select_one("a")["title"].endswith("通知")))]
     except Exception as e:
-        current_app.logger.warning(str(e))
+        logger.warning(str(e))
         return []
