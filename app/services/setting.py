@@ -35,7 +35,7 @@ class SettingService:
             qQuery = qQuery.filter(Setting.name.like(f'%{name}%'))
 
         if key := query.get('key'):
-            qQuery = qQuery.filter(Setting.name.like(f'%{key}%'))
+            qQuery = qQuery.filter(Setting.key.like(f'%{key}%'))
 
         order_field = getattr(Setting, order_by)
         if desc:
