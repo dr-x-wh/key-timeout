@@ -39,7 +39,7 @@ class NoticeService:
         if (release_date_0 := query.get("release_date_0")) and (release_date_1 := query.get("release_date_1")):
             release_date_0 = date.fromisoformat(release_date_0)
             release_date_1 = date.fromisoformat(release_date_1)
-            qQuery = qQuery.filter(Notice.start_date.between(release_date_0, release_date_1))
+            qQuery = qQuery.filter(Notice.release_date.between(release_date_0, release_date_1))
 
         order_field = getattr(Notice, order_by)
         if desc:

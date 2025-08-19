@@ -26,8 +26,8 @@ def get_list() -> None:
 
 
 def send() -> None:
-    notice_time = SettingService.get_value_by_name("notice_time")
-    notice_phone = SettingService.get_value_by_name("notice_phone")
+    notice_time = SettingService.get_value_by_key("notice_time")
+    notice_phone = SettingService.get_value_by_key("notice_phone")
     if notice_time and notice_phone and str(datetime.now().hour) == notice_time:
         notices = NoticeService.get_job()
         items = [item.to_dict() for item in notices]

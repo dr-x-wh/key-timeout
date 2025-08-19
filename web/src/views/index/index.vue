@@ -27,7 +27,9 @@ const handleLogout = async () => {
   <div>
     <el-menu style="position: relative;" :default-active="current" class="layout-menu" mode="horizontal" router>
       <template v-for="item in menu">
-        <el-menu-item :index="item.path">{{ item.meta?.title }}</el-menu-item>
+        <template v-if="!item.meta?.hidden?.(userStore)">
+          <el-menu-item :index="item.path">{{ item.meta?.title }}</el-menu-item>
+        </template>
       </template>
       <div style="position: absolute; right: 10px; height: 100%; display: flex; gap: 10px; align-items: center;">
         <el-text>欢迎，{{ userStore.username || '用户' }}</el-text>

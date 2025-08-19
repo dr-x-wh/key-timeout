@@ -16,8 +16,8 @@ class SettingService:
         return setting
 
     @staticmethod
-    def get_value_by_name(name: str) -> Optional[str]:
-        setting = Setting.query.filter_by(name=name).first()
+    def get_value_by_key(key: str) -> Optional[str]:
+        setting = Setting.query.filter_by(key=key).first()
         if not setting:
             return None
         return setting.value
@@ -27,12 +27,15 @@ class SettingService:
         page = query.get('page', 1, type=int)
         per_page = query.get('per_page', 10, type=int)
         desc = query.get('desc', 'true').lower() == 'true'
-        order_by = query.get('order_by', 'name')
+        order_by = query.get('order_by', 'key')
 
         qQuery = Setting.query
 
         if name := query.get('name'):
             qQuery = qQuery.filter(Setting.name.like(f'%{name}%'))
+
+        if key := query.get('key'):
+            qQuery = qQuery.filter(Setting.name.like(f'%{key}%'))
 
         order_field = getattr(Setting, order_by)
         if desc:

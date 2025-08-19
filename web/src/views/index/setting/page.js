@@ -1,3 +1,3 @@
 export default {
-    title: '设置', sort: 2,
+    title: '用户通知设置', sort: 9,
 }
