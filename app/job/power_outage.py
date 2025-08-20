@@ -22,7 +22,7 @@ def get_list() -> None:
     notice_list.reverse()
     if notice_list:
         for notice in notice_list:
-            NoticeService.create(notice["title"], notice["release_date"])
+            NoticeService.create(notice["title"], notice["date"])
 
 
 def send() -> None:
