@@ -1,4 +1,4 @@
-bind = "0.0.0.0:9090"
+bind = "0.0.0.0:9009"
 workers = 9
 accesslog = "logs/access.log"
 errorlog = "logs/error.log"
