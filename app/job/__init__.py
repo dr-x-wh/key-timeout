@@ -23,6 +23,6 @@ def run_job():
                           replace_existing=True)
 
         scheduler.start()
-        logger.info("job is running")
+        logger.info("job start")
 
         atexit.register(lambda: scheduler.shutdown())
