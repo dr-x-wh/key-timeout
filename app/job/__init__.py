@@ -1,4 +1,5 @@
 import atexit
+import logging
 from typing import Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -11,6 +12,7 @@ scheduler: Optional[BackgroundScheduler] = None
 def run_job():
     global scheduler
     if scheduler is None:
+        logger = logging.getLogger("apscheduler")
         scheduler = BackgroundScheduler(daemon=True)
 
         from app.job.key_timeout import run as run_key_timeout
@@ -22,5 +24,6 @@ def run_job():
                           replace_existing=True)
 
         scheduler.start()
+        logger.info("job is running")
 
         atexit.register(lambda: scheduler.shutdown())
