@@ -10,6 +10,7 @@ COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 COPY . .
 RUN mkdir -p logs
+RUN chmod +x /app/bin/run.sh
 
 EXPOSE 9009
 CMD ["/app/bin/run.sh"]
