@@ -6,12 +6,10 @@ from flask import Flask
 from app import create_app
 from app.job import run_job
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 app: Flask = create_app()
-logging.error(os.getenv("RUN_MAIN"))
 if os.getenv("RUN_MAIN", "false") == "true":
-    app.logger.error("job is running")
     run_job()
 
 if __name__ == "__main__":
