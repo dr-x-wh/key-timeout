@@ -1,11 +1,13 @@
+import logging
 from datetime import datetime
 from typing import List, Dict
 
 from app import create_app
-from app.extensions import logger
 from app.services.info import InfoService
 from app.services.user import UserService
 from app.utils.sms_tools import send_sms
+
+logger = logging.getLogger(__name__)
 
 
 def run() -> None:
