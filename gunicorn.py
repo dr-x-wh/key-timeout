@@ -1,5 +1,6 @@
 bind = "0.0.0.0:9009"
-workers = 9
+workers = 4
+threads = 2
 accesslog = "logs/access.log"
 errorlog = "logs/error.log"
 loglevel = "info"
