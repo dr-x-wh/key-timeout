@@ -1,10 +1,10 @@
 services:
-  api:
+  app-api:
     image: crpi-q5oz9nsemoqwdm6f.cn-hangzhou.personal.cr.aliyuncs.com/dr-x/key-timeout:latest
     container_name: app-api
     restart: always
     volumes:
-      - app_data:/app/instance
+      - app-data:/app/instance
     ports:
       - "9009:9009"
     networks:
@@ -34,7 +34,9 @@ services:
 networks:
   app-net:
     driver: bridge
+    name: app-net
 
 volumes:
-  app_data:
+  app-data:
     driver: local
+    name: app-data

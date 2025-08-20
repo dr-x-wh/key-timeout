@@ -1,12 +1,12 @@
 services:
-  api:
+  app-api:
     build:
       context: ..
       dockerfile: Dockerfile
     container_name: app-api
     restart: always
     volumes:
-      - app_data:/app/instance
+      - app-data:/app/instance
     ports:
       - "9009:9009"
     networks:
@@ -36,7 +36,9 @@ services:
 networks:
   app-net:
     driver: bridge
+    name: app-net
 
 volumes:
-  app_data:
+  app-data:
     driver: local
+    name: app-data
