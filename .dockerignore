@@ -1,5 +1,0 @@
-.env.example
-.flaskenv
-.gitignore
-Dockerfile
-README.md
