@@ -9,6 +9,7 @@ COPY --from=builder /root/.local /root/.local
 
 ENV PATH=/root/.local/bin:$PATH
 COPY . .
+RUN mkdir -p logs
 
 EXPOSE 9009
 CMD ["gunicorn", "-c", "gunicorn.py", "run:app"]
