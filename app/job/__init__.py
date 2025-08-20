@@ -15,11 +15,11 @@ def run_job():
         scheduler = BackgroundScheduler(daemon=True)
 
         from app.job.key_timeout import run as run_key_timeout
-        scheduler.add_job(func=run_key_timeout, trigger=CronTrigger(second=0), id='run_key_timeout',
+        scheduler.add_job(func=run_key_timeout, trigger=CronTrigger(minute=0), id='run_key_timeout',
                           replace_existing=True)
 
         from app.job.power_outage import run as run_power_outage
-        scheduler.add_job(func=run_power_outage, trigger=CronTrigger(second=0), id='run_power_outage',
+        scheduler.add_job(func=run_power_outage, trigger=CronTrigger(minute=0), id='run_power_outage',
                           replace_existing=True)
 
         scheduler.start()
