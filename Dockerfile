@@ -8,11 +8,7 @@ WORKDIR /app
 COPY --from=builder /root/.local /root/.local
 
 ENV PATH=/root/.local/bin:$PATH
-COPY app/ .
-COPY .env .
-COPY .flaskenv .
-COPY gunicorn.py .
-COPY run.py .
+COPY . .
 
 EXPOSE 9009
 CMD ["gunicorn", "-c", "gunicorn.py", "run:app"]
