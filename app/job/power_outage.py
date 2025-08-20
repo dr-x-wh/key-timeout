@@ -1,13 +1,11 @@
-import logging
 from datetime import datetime
 
 from app import create_app
+from app.extensions import logger
 from app.services.setting import SettingService
 from app.services.notice import NoticeService
 from app.utils.sms_tools import send_sms
 from app.utils.web_tools import get_web_notice
-
-logger = logging.getLogger(__name__)
 
 
 def run() -> None:
