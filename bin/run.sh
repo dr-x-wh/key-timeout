@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export RUN_MAIN=false
+
 if [ -d "migrations" ]; then
     echo "数据库迁移已初始化"
 else
@@ -8,5 +10,7 @@ fi
 
 flask db migrate -m "init"
 flask db upgrade
+
+export RUN_MAIN=true
 
 gunicorn -c gunicorn.py run:app

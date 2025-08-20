@@ -5,3 +5,11 @@ errorlog = "logs/error.log"
 loglevel = "info"
 timeout = 30
 preload_app = True
+
+
+def post_fork(server, worker):
+    if worker.worker_id == 0:
+        import os
+        from app.job import run_job
+        if os.getenv("RUN_MAIN", "false") == "true":
+            run_job()
