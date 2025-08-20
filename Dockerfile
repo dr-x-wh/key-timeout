@@ -12,4 +12,4 @@ COPY . .
 RUN mkdir -p logs
 
 EXPOSE 9009
-CMD ["gunicorn", "-c", "gunicorn.py", "run:app"]
+CMD ["/app/bin/run.sh"]
