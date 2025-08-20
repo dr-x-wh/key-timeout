@@ -138,7 +138,16 @@ onUnmounted(() => {
       <el-table-column :width="60" align="center" label="序号" type="index"/>
       <el-table-column sortable="custom" prop="title" :min-width="200" label="通知标题"/>
       <el-table-column sortable="custom" align="center" prop="release_date" :width="200" label="发布日期"/>
-      <el-table-column sortable="custom" align="center" prop="state" :width="200" label="通知状态"/>
+      <el-table-column sortable="custom" align="center" prop="state" :width="200" label="通知状态">
+        <template #default="{row}">
+          <template v-if="row?.state === '1'">
+            <div style="color: #67C23A">已通知</div>
+          </template>
+          <template v-else>
+            <div style="color: #E6A23C">未通知</div>
+          </template>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination :size="isMobile?'small':'default'" style="width: 100%;" layout="total, prev, pager, next, ->, sizes"
                    v-model:page-size="query.per_page"
