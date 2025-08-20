@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 app: Flask = create_app()
 if os.getenv("RUN_MAIN", "false") == "true":
-    app.logger.info("job is running")
+    app.logger.error("job is running")
     run_job()
 
 if __name__ == "__main__":
