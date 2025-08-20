@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from app.services import SettingService
+from app.services.setting import SettingService
 from app.utils.result import Result
 from app.utils.security import login_required, UserTools
 

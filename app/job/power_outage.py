@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from app import create_app
-from app.services import SettingService
+from app.services.setting import SettingService
 from app.services.notice import NoticeService
 from app.utils.sms_tools import send_sms
 from app.utils.web_tools import get_web_notice
