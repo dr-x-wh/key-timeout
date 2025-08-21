@@ -219,6 +219,16 @@ onUnmounted(() => {
       <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
       <el-table-column sortable="custom" align="center" prop="start_date" :width="200" label="开始日期"/>
       <el-table-column sortable="custom" align="center" prop="end_date" :width="200" label="到期日期"/>
+      <el-table-column sortable="custom" align="center" prop="state" :width="150" label="通知状态">
+        <template #default="{row}">
+          <template v-if="row?.state === '1'">
+            <div style="color: #67C23A">已通知</div>
+          </template>
+          <template v-else>
+            <div style="color: #E6A23C">未通知</div>
+          </template>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" align="center" :width="60" label="操作">
         <template #default="{row}">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
