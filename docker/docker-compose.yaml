@@ -1,5 +1,7 @@
 services:
   app-api:
+    env_file:
+      - ../.env
     image: crpi-q5oz9nsemoqwdm6f.cn-hangzhou.personal.cr.aliyuncs.com/dr-x/key-timeout:latest
     container_name: app-api
     restart: always
