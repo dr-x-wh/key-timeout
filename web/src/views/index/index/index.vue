@@ -215,6 +215,7 @@ onUnmounted(() => {
               :data="list">
       <el-table-column :width="60" align="center" label="序号" type="index"/>
       <el-table-column sortable="custom" prop="name" :min-width="200" label="提醒任务名称"/>
+      <el-table-column sortable="custom" prop="key" :width="100" label="密钥"/>
       <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
       <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
       <el-table-column sortable="custom" align="center" prop="start_date" :width="200" label="开始日期"/>

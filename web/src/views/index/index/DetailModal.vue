@@ -18,6 +18,7 @@ const title = computed(() => {
 
 const data = ref({
   name: null,
+  key: null,
   person: null,
   phone: null,
   start_date: null,
@@ -42,6 +43,9 @@ const date_range = computed({
 const rules = ref({
   name: [
     {required: true, message: '请输入提醒任务名称', trigger: 'blur'},
+  ],
+  key: [
+    {required: true, message: '请输入密钥', trigger: 'blur'},
   ],
   start_date: [
     {required: true, message: '请选择起止日期', trigger: 'change'},
@@ -72,6 +76,7 @@ const open = (typeVal, idVal) => {
 const close = () => {
   data.value = {
     name: null,
+    key: null,
     person: null,
     phone: null,
     start_date: null,
@@ -136,6 +141,11 @@ defineExpose({
           <el-col :xs="24" :sm="12" :md="12">
             <el-form-item prop="name" label="提醒任务名称">
               <el-input style="width: 100%;" :validate-event="false" v-model="data.name"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12" :md="12">
+            <el-form-item prop="key" label="密钥">
+              <el-input style="width: 100%;" :validate-event="false" v-model="data.key"/>
             </el-form-item>
           </el-col>
         </el-row>
