@@ -17,7 +17,7 @@ def run() -> None:
 
 {data['name']} 的key将于 {data['end_date']} 过期，
 
-使用人：{data['person'] or '未设定'}，联系电话{data['phone'] or '未设定'}。
+使用人：{data['person'] or '未设定'}，联系电话：{data['phone'] or '未设定'}。
         """.strip()):
             send_finish(data["id"])
 
