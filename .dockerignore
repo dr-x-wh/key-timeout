@@ -1,6 +1,6 @@
-__pycache__/
-.idea/
-.vscode/
-.venv/
-instance/
-web/
+./docker/
+./web/
+./.env.example
+./.gitignore
+./Dockerfile
+./README.md
