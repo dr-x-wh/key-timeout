@@ -220,7 +220,7 @@ onUnmounted(() => {
             <template #content>
               <div style="width: 220px;">{{ row?.name }}</div>
             </template>
-            <el-text :line-clamp="1" truncated>{{ row?.name }}</el-text>
+            <div class="line-ellipsis">{{ row?.name }}</div>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -240,7 +240,7 @@ onUnmounted(() => {
             <template #content>
               <div style="width: 220px;">{{ row?.person }}</div>
             </template>
-            <el-text :line-clamp="1" truncated>{{ row?.person }}</el-text>
+            <div class="line-ellipsis">{{ row?.person }}</div>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -250,7 +250,7 @@ onUnmounted(() => {
             <template #content>
               <div style="width: 220px;">{{ row?.phone }}</div>
             </template>
-            <el-text :line-clamp="1" truncated>{{ row?.phone }}</el-text>
+            <div class="line-ellipsis">{{ row?.phone }}</div>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -283,4 +283,9 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.line-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
