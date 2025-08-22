@@ -214,10 +214,46 @@ onUnmounted(() => {
               :row-key="row => row.id"
               :data="list">
       <el-table-column :width="60" align="center" label="序号" type="index"/>
-      <el-table-column sortable="custom" prop="name" :min-width="200" label="提醒任务名称"/>
-      <el-table-column sortable="custom" prop="key" :width="100" label="密钥"/>
-      <el-table-column sortable="custom" prop="person" :width="200" label="联系人"/>
-      <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话"/>
+      <el-table-column sortable="custom" :min-width="200" label="提醒任务名称">
+        <template #default="{row}">
+          <el-tooltip effect="light">
+            <template #content>
+              <div style="width: 220px;">{{ row?.name }}</div>
+            </template>
+            <el-text :line-clamp="1" truncated>{{ row?.name }}</el-text>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column prop="key" :width="100" align="center" label="密钥">
+        <template #default="{row}">
+          <el-tooltip effect="light">
+            <template #content>
+              <div style="width: 220px;">{{ row?.key }}</div>
+            </template>
+            <el-button link>查看</el-button>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column sortable="custom" prop="person" :width="200" label="联系人">
+        <template #default="{row}">
+          <el-tooltip effect="light">
+            <template #content>
+              <div style="width: 220px;">{{ row?.person }}</div>
+            </template>
+            <el-text :line-clamp="1" truncated>{{ row?.person }}</el-text>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column sortable="custom" prop="phone" :width="200" label="联系电话">
+        <template #default="{row}">
+          <el-tooltip effect="light">
+            <template #content>
+              <div style="width: 220px;">{{ row?.phone }}</div>
+            </template>
+            <el-text :line-clamp="1" truncated>{{ row?.phone }}</el-text>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column sortable="custom" align="center" prop="start_date" :width="200" label="开始日期"/>
       <el-table-column sortable="custom" align="center" prop="end_date" :width="200" label="到期日期"/>
       <el-table-column sortable="custom" align="center" prop="state" :width="150" label="通知状态">

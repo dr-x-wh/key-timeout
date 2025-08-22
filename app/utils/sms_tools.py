@@ -26,6 +26,8 @@ def send(phone: str, msg: str) -> bool:
     sms_url = os.getenv("SMS_URL")
     sms_secret_key = os.getenv("SMS_SECRET_KEY")
     sms_operator = os.getenv("SMS_OPERATOR")
+    if not sms_url or not sms_secret_key or not sms_operator:
+        raise ValueError("没有设置短信接口")
     params_map = {}
     try:
         # 授权处理

@@ -72,9 +72,6 @@ const handleSendCode = async () => {
             .then(() => {
               startCountdown()
             })
-            .catch((err) => {
-              ElMessage.warning('发送失败')
-            })
       }
     }
   } catch (e) {
