@@ -104,9 +104,9 @@ const handleSort = ({order, prop}) => {
   getList()
 }
 
-const handleDetail = (type, id) => {
+const handleDetail = () => {
   if (detailRef.value) {
-    detailRef.value.open(type, id).then(() => getList())
+    detailRef.value.open().then(() => getList())
   }
 }
 
@@ -208,7 +208,7 @@ onUnmounted(() => {
       </el-row>
     </el-form>
     <div style="display: flex; justify-content: flex-end;">
-      <el-button icon="Plus" @click="() => handleDetail('add')">添加</el-button>
+      <el-button icon="Plus" @click="handleDetail">添加</el-button>
     </div>
     <el-table :size="isMobile?'small':'default'" style="width: 100%" ref="tableRef" @sort-change="handleSort"
               :row-key="row => row.id"
@@ -233,8 +233,6 @@ onUnmounted(() => {
       <el-table-column fixed="right" align="center" :width="60" label="操作">
         <template #default="{row}">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-            <el-button type="warning" link @click="() => handleDetail('update', row?.id)">修改</el-button>
-            <div/>
             <el-button type="danger" link @click="() => handleDelete(row?.id)">删除</el-button>
           </div>
         </template>

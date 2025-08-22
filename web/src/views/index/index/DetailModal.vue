@@ -1,20 +1,13 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref} from "vue";
-import {useCreate, useGetDetail, useUpdate} from "./api.js";
+import {useCreate} from "./api.js";
 import {ElMessage} from "element-plus";
 
 const loading = ref(false)
 const visible = ref(false)
-const type = ref(null)
 const modalRef = ref()
 const formRef = ref()
 let resolveRef
-
-const title = computed(() => {
-  if (type.value === 'add') return '添加'
-  else if (type.value === 'update') return '修改'
-  else return '未知'
-})
 
 const data = ref({
   name: null,
@@ -64,11 +57,9 @@ const handleResize = () => {
   dialogWidth.value = isMobile.value ? '90%' : '60%'
 }
 
-const open = (typeVal, idVal) => {
+const open = () => {
   return new Promise((resolve) => {
     resolveRef = resolve
-    if (typeVal === 'update') getData(idVal)
-    type.value = typeVal
     visible.value = true
   })
 }
@@ -85,24 +76,12 @@ const close = () => {
   if (formRef.value) formRef.value.clearValidate()
 }
 
-const getData = async (info_id) => {
-  try {
-    loading.value = true
-    data.value = await useGetDetail(info_id)
-  } catch (e) {
-    console.warn(e)
-  } finally {
-    loading.value = false
-  }
-}
-
 const handleSave = async () => {
   try {
     if (formRef.value) {
       const valid = await formRef.value.validate()
       if (valid) {
-        if (type.value === 'add') await useCreate(data.value)
-        else if (type.value === 'update') await useUpdate(data.value)
+        await useCreate(data.value)
         ElMessage.success("保存成功")
         if (modalRef.value) modalRef.value.handleClose()
         resolveRef()
@@ -111,7 +90,6 @@ const handleSave = async () => {
   } catch (e) {
     console.warn(e)
   }
-
 }
 
 onMounted(() => {
@@ -131,7 +109,7 @@ defineExpose({
 <template>
   <el-dialog ref="modalRef" v-model="visible" :width="dialogWidth" @closed="close">
     <template #header>
-      <el-text size="large">{{ title }}</el-text>
+      <el-text size="large">添加</el-text>
     </template>
     <div v-loading="loading" style="padding: 0 20px;">
       <el-form :size="isMobile?'small':'default'" :label-position="isMobile?'top':'left'" ref="formRef" :rules="rules"

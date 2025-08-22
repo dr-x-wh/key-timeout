@@ -62,11 +62,12 @@ class InfoService:
         return qQuery.paginate(page=page, per_page=per_page, error_out=False)
 
     @staticmethod
-    def create(user_id: int, name: str, start_date: date, end_date: date, person: Optional[int],
+    def create(user_id: int, name: str, key: str, start_date: date, end_date: date, person: Optional[int],
                phone: Optional[int]) -> Optional[Info]:
         info = Info()
         info.user_id = user_id
         info.name = name
+        info.key = key
         info.start_date = start_date
         info.end_date = end_date
         if person:
@@ -74,31 +75,6 @@ class InfoService:
         if phone:
             info.phone = phone
         db.session.add(info)
-        db.session.commit()
-        db.session.refresh(info)
-        if info:
-            return info
-        return None
-
-    @staticmethod
-    def update(info_id: int, name: Optional[str], start_date: Optional[str], end_date: Optional[str],
-               person: Optional[int], phone: Optional[int]) -> Optional[Info]:
-        info = Info.query.get(info_id)
-        if not info:
-            return None
-        if name:
-            info.name = name
-        try:
-            if start_date:
-                info.start_date = date.fromisoformat(start_date)
-            if end_date:
-                info.end_date = date.fromisoformat(end_date)
-        except ValueError as e:
-            logger.warning(str(e))
-        if person:
-            info.person = person
-        if phone:
-            info.phone = phone
         db.session.commit()
         db.session.refresh(info)
         if info:
