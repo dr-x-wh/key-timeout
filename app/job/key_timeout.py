@@ -13,9 +13,11 @@ def run() -> None:
     data_list = get_list()
     for data in data_list:
         if send_sms(data['from_phone'], f"""
-        武汉理工大学大模型密钥过期提醒：
-        {data['name']} 的key将于 {data['end_date']} 过期，
-        使用人：{data['person']}，联系电话{data['phone']}。
+武汉理工大学大模型密钥过期提醒：
+
+{data['name']} 的key将于 {data['end_date']} 过期，
+
+使用人：{data['person'] or '未设定'}，联系电话{data['phone'] or '未设定'}。
         """.strip()):
             send_finish(data["id"])
 

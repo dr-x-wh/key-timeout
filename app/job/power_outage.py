@@ -31,9 +31,12 @@ def send() -> None:
         items = [item.to_dict() for item in notices]
         for item in items:
             if send_sms(notice_phone, f"""
-            武汉理工大学停电通知提醒：
-            {item["title"]}
-            {item["release_date"]}
-            请前往 http://i.whut.edu.cn/xxtg/znbm/hqglc/ 查看详情。
+武汉理工大学停电通知提醒：
+
+{item["title"]}
+
+{item["release_date"]}
+
+请前往 http://i.whut.edu.cn/xxtg/znbm/hqglc/ 查看详情。
             """.strip()):
                 NoticeService.state_finish(item.get("id"))
